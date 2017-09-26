@@ -3,26 +3,27 @@
   become: true
   roles:
     - role: nginx
-      nginx_sites:
-        sei.mj.gov.br:
-          - listen *:80
-          - server_name "sei.mj.gov.br"
+      nginx_vhosts:
+        - listen *:80
+          server_name "sei.mj.gov.br"
 
-          - access_log /var/log/nginx/access.log combined
-          - error_log /var/log/nginx/error.log
-          - rewrite         ^/$    http://sei.mj.gov.br/sei permanent;
-          - location / {
+          access_log /var/log/nginx/access.log combined
+          error_log /var/log/nginx/error.log
+          rewrite         ^/$    http://sei.mj.gov.br/sei permanent;
+          location / {
                   proxy_set_header        Host $http_host;
                   proxy_set_header        X-Real-IP $remote_addr;
                   proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
                   proxy_pass              http://lb.sei.mj.gov.br;
             }
-      nginx_configs:
-        upstream:
-          - upstream lb.sei.mj.gov.br {
-                   ip_hash;
-                   server 10.10.12.109;
-            }
+      nginx_upstreams:
+        - name: lb.sei.mj.gov.br
+          strategy: "ip_hash" # "least_conn", etc.
+          keepalive: 16 # optional
+          servers: {
+          "10.10.12.109"
+          }
+
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"
     https_proxy: "http://proxy.mj.gov.br:3128"
