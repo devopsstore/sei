@@ -1,19 +1,21 @@
 ---
-  - hosts: nginx
-    become: true
-    roles:
-      - role: nginx
-        nginx_remove_default_server: True
-        nginx_server_list:
-          - name: "sei.mj.gov.br"
-          delete: False
+- hosts: nginx
+  become: true
+  roles:
+    - role: nginx
+      nginx_server_list:
+        - name: "sei.mj.gov.br"
+          error_log: "/var/log/nginx/error.log"
+          access_log: "/var/log/nginx/access.log"
           listen:
             - ["80", "default_server"]
-            access_log: "/var/log/nginx/name_access.log"
-            upstream:
-              strategy: "ip_hash"
-              server_list:
-                - "10.10.12.109 weight=3"
-                location_list:
-                  - name: "/"
-                  proxy_pass: "http://lb.sei.mj.gov.br"
+
+          upstream:
+            - name: "lb.sei.mj.gov.br"
+            strategy: "ip_hash"
+            server_list:
+              - "10.10.12.109 weight=3"
+
+            location_list:
+              - name: "/"
+              proxy_pass: "http://lb.sei.mj.gov.br"
