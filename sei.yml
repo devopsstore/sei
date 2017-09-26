@@ -5,7 +5,7 @@
     - role: nginx
       nginx_vhosts:
         - listen *:80
-          server_name "sei.mj.gov.br"
+        - server_name "sei.mj.gov.br"
 
           access_log /var/log/nginx/access.log combined
           error_log /var/log/nginx/error.log
