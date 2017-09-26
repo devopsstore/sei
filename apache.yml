@@ -7,15 +7,9 @@
       apache_listen_ip: "*"
       apache_listen_port: 8080
 
-      apache_global_vhost_settings: |
-        DirectoryIndex index.php index.html
-
       apache_vhosts:
-      - servername: "local.dev"
-        documentroot: "/var/www/html"
-        extra_parameters: |
-          RewriteCond %{HTTP_HOST} !^www\. [NC]
-          RewriteRule ^(.*)$ http://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+      - servername: "sei.mj.gov.br"
+      - serveradmin: "admin@mj.gov.br"        
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"

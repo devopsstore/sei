@@ -1,82 +1,70 @@
 {{ apache_global_vhost_settings }}
-
 {# Set up VirtualHosts #}
+ServerName {{ $hostname }}
+
+### Block bot Internet ###
+SetEnvIfNoCase user-agent "Microsoft Data Access Internet Publishing Provider Protocol Discovery" bad_bot=1
+<FilesMatch "(.*)">
+        Order Allow,Deny
+        Allow from all
+        Deny from env=bad_bot
+</FilesMatch>
+
+### Otimizacoes de ambiente ###
+
+KeepAlive On
+MaxKeepAliveRequests 100
+KeepAliveTimeout 15
+
+<IfModule prefork.c>
+    StartServers 20
+    MinSpareServers 10
+    MaxSpareServers 30
+    ServerLimit 2000
+    MaxClients 2000
+    MaxRequestsPerChild 0
+</IfModule>
+
+<IfModule worker.c>
+    StartServers 3
+    MaxClients 150
+    MinSpareThreads 25
+    MaxSpareThreads 75
+    ThreadsPerChild 25
+    MaxRequestsPerChild 10000
+</IfModule>
+
 {% for vhost in apache_vhosts %}
 <VirtualHost {{ apache_listen_ip }}:{{ apache_listen_port }}>
   ServerName {{ vhost.servername }}
 {% if vhost.serveralias is defined %}
   ServerAlias {{ vhost.serveralias }}
 {% endif %}
-{% if vhost.documentroot is defined %}
-  DocumentRoot "{{ vhost.documentroot }}"
-{% endif %}
-
 {% if vhost.serveradmin is defined %}
   ServerAdmin {{ vhost.serveradmin }}
 {% endif %}
-{% if vhost.documentroot is defined %}
-  <Directory "{{ vhost.documentroot }}">
-    AllowOverride {{ vhost.allow_override | default(apache_allow_override) }}
-    Options {{ vhost.options | default(apache_options) }}
-{% if apache_vhosts_version == "2.2" %}
-    Order allow,deny
-    Allow from all
-{% else %}
-    Require all granted
-{% endif %}
+
+  DirectoryIndex index.php index.html
+  IndexIgnore *
+
+  HostnameLookups Off
+  ServerSignature Off
+  AddDefaultCharset iso-8859-1
+
+  Alias "/sei" "/var/www/html/sei/web"
+  Alias "/sip" "/var/www/html/sip/web"
+  Alias "/infra_css" "/var/www/html/infra/infra_css"
+  Alias "/infra_js" "/var/www/html/infra/infra_js"
+
+  <Directory />
+          AllowOverride None
+          Require all denied
   </Directory>
-{% endif %}
-{% if vhost.extra_parameters is defined %}
-  {{ vhost.extra_parameters }}
-{% endif %}
-</VirtualHost>
 
-{% endfor %}
-
-{# Set up SSL VirtualHosts #}
-{% for vhost in apache_vhosts_ssl %}
-{% if apache_ignore_missing_ssl_certificate or apache_ssl_certificates.results[loop.index0].stat.exists %}
-<VirtualHost {{ apache_listen_ip }}:{{ apache_listen_port_ssl }}>
-  ServerName {{ vhost.servername }}
-{% if vhost.serveralias is defined %}
-  ServerAlias {{ vhost.serveralias }}
-{% endif %}
-{% if vhost.documentroot is defined %}
-  DocumentRoot "{{ vhost.documentroot }}"
-{% endif %}
-
-  SSLEngine on
-  SSLCipherSuite {{ apache_ssl_cipher_suite }}
-  SSLProtocol {{ apache_ssl_protocol }}
-  SSLHonorCipherOrder On
-{% if apache_vhosts_version == "2.4" %}
-  SSLCompression off
-{% endif %}
-  SSLCertificateFile {{ vhost.certificate_file }}
-  SSLCertificateKeyFile {{ vhost.certificate_key_file }}
-{% if vhost.certificate_chain_file is defined %}
-  SSLCertificateChainFile {{ vhost.certificate_chain_file }}
-{% endif %}
-
-{% if vhost.serveradmin is defined %}
-  ServerAdmin {{ vhost.serveradmin }}
-{% endif %}
-{% if vhost.documentroot is defined %}
-  <Directory "{{ vhost.documentroot }}">
-    AllowOverride {{ vhost.allow_override | default(apache_allow_override) }}
-    Options {{ vhost.options | default(apache_options) }}
-{% if apache_vhosts_version == "2.2" %}
-    Order allow,deny
-    Allow from all
-{% else %}
-    Require all granted
-{% endif %}
+  <Directory ~ "(/var/www/html/sei/web|/var/www/html/sip/web|/var/www/html/infra/infra_css|/var/www/html/infra/infra_js|/var/www/html/infra/infra_php)" >
+          AllowOverride None
+          Options None
+          Require all granted
   </Directory>
-{% endif %}
-{% if vhost.extra_parameters is defined %}
-  {{ vhost.extra_parameters }}
-{% endif %}
-</VirtualHost>
-
-{% endif %}
+  </VirtualHost>
 {% endfor %}
