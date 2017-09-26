@@ -50,9 +50,7 @@ http {
     # gzip on;
 {% endblock %}
 
-{% if nginx_extra_http_options %}
-    {{ nginx_extra_http_options|indent(4, False) }}
-{% endif %}
+
 
 {% block http_upstream %}
 {% for upstream in nginx_upstreams %}
