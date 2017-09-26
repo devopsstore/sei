@@ -9,7 +9,7 @@
 
       apache_vhosts:
       - servername: "sei.mj.gov.br"
-      - serveradmin: "admin@mj.gov.br"        
+        serveradmin: "admin@mj.gov.br"
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"

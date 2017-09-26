@@ -35,35 +35,34 @@ KeepAliveTimeout 15
 
 {% for vhost in apache_vhosts %}
 <VirtualHost {{ apache_listen_ip }}:{{ apache_listen_port }}>
-  ServerName {{ vhost.servername }}
+    ServerName {{ vhost.servername }}
 {% if vhost.serveralias is defined %}
-  ServerAlias {{ vhost.serveralias }}
+    ServerAlias {{ vhost.serveralias }}
 {% endif %}
 {% if vhost.serveradmin is defined %}
-  ServerAdmin {{ vhost.serveradmin }}
+    ServerAdmin {{ vhost.serveradmin }}
 {% endif %}
+    DirectoryIndex index.php index.html
+    IndexIgnore *
 
-  DirectoryIndex index.php index.html
-  IndexIgnore *
+    HostnameLookups Off
+    ServerSignature Off
+    AddDefaultCharset iso-8859-1
 
-  HostnameLookups Off
-  ServerSignature Off
-  AddDefaultCharset iso-8859-1
+    Alias "/sei" "/var/www/html/sei/web"
+    Alias "/sip" "/var/www/html/sip/web"
+    Alias "/infra_css" "/var/www/html/infra/infra_css"
+    Alias "/infra_js" "/var/www/html/infra/infra_js"
 
-  Alias "/sei" "/var/www/html/sei/web"
-  Alias "/sip" "/var/www/html/sip/web"
-  Alias "/infra_css" "/var/www/html/infra/infra_css"
-  Alias "/infra_js" "/var/www/html/infra/infra_js"
+    <Directory />
+            AllowOverride None
+            Require all denied
+    </Directory>
 
-  <Directory />
-          AllowOverride None
-          Require all denied
-  </Directory>
-
-  <Directory ~ "(/var/www/html/sei/web|/var/www/html/sip/web|/var/www/html/infra/infra_css|/var/www/html/infra/infra_js|/var/www/html/infra/infra_php)" >
-          AllowOverride None
-          Options None
-          Require all granted
-  </Directory>
+    <Directory ~ "(/var/www/html/sei/web|/var/www/html/sip/web|/var/www/html/infra/infra_css|/var/www/html/infra/infra_js|/var/www/html/infra/infra_php)" >
+            AllowOverride None
+            Options None
+            Require all granted
+    </Directory>
   </VirtualHost>
 {% endfor %}
