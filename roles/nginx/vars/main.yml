@@ -1,18 +1,22 @@
 ---
+# Overwrite these variables in Debian or RedHat files
+nginx_os_repo_url:
+nginx_os_repo_key:
+nginx_packages_install_recommends: true
+# Upgrade the database if older than these seconds
+# Time is only valid in Debian, set to 0/False to disable
+nginx_packages_update_cache: 1800
 
-nginx_env:
-  RUNLEVEL: 1
+nginx_daemon: nginx
+nginx_user: "ningx"
+nginx_group: "nginx"
 
-nginx_installation_types_using_service: ["packages", "configuration-only"]
+nginx_pidfile: /var/run/nginx.pid
+nginx_config_dir: /etc/nginx
+nginx_config_file: /etc/nginx/nginx.conf
+nginx_ssl_dir: /etc/nginx/ssl
+nginx_sites_dir: /etc/nginx/sites-enabled
+nginx_confd_dir: /etc/nginx/conf.d
+nginx_auth_dir: /etc/nginx/auth.d
+nginx_default_server_path: /etc/nginx/sites-enabled/default
 
-nginx_is_el: "{{ ansible_distribution in ['RedHat', 'CentOS'] }}"
-
-nginx_http_default_params:
-  - sendfile "on"
-  - tcp_nopush "on"
-  - tcp_nodelay "on"
-  - keepalive_timeout "65"
-  - access_log "{{nginx_log_dir}}/access.log"
-  - "error_log {{nginx_log_dir}}/error.log {{nginx_error_log_level}}"
-  - server_tokens off
-  - types_hash_max_size 2048

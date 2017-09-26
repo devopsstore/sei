@@ -1,34 +1,22 @@
 ---
-- include: selinux.yml
-  when: ansible_selinux and ansible_selinux.status == "enabled"
-  tags: [packages, selinux, nginx]
+- name: Control if the role is supported on this system
+  fail: msg="Dnsmasq role is not supported on this system"
+  when: >
+     ansible_distribution != 'Ubuntu' and 
+     ansible_distribution != 'CentOS' and 
+     ansible_distribution != 'Debian' and 
+     ansible_distribution != 'Red Hat Enterprise Linux'
 
-- include: nginx-official-repo.yml
-  when: nginx_official_repo == True
-  tags: [packages, nginx]
+- name: Include OS specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+  tags: ["distribution", "packages", "service", "nginx"]
 
-- include: installation.packages.yml
-  when: nginx_installation_type == "packages"
-  tags: [packages, nginx]
+- include: install.yml
+  tags: ["nginx", "install"]
 
-- include: ensure-dirs.yml
-  tags: [configuration, nginx]
+- include: configure.yml
+  tags: ["nginx", "configure"]
 
-- include: remove-defaults.yml
-  when: not keep_only_specified
-  tags: [configuration, nginx]
+- include: server.yml
+  tags: ["nginx", "server"]
 
-- include: remove-extras.yml
-  when: keep_only_specified
-  tags: [configuration, nginx]
-
-- include: remove-unwanted.yml
-  tags: [configuration, nginx]
-
-- include: configuration.yml
-  tags: [configuration, nginx]
-
-- name: Start the nginx service
-  service: name={{ nginx_service_name }} state=started enabled=yes
-  when: nginx_installation_type in nginx_installation_types_using_service and nginx_daemon_mode == "on"
-  tags: [service, nginx]
