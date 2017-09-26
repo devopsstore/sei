@@ -1,6 +1,3 @@
-{{ apache_global_vhost_settings }}
-{# Set up VirtualHosts #}
-
 ### Block bot Internet ###
 SetEnvIfNoCase user-agent "Microsoft Data Access Internet Publishing Provider Protocol Discovery" bad_bot=1
 <FilesMatch "(.*)">
