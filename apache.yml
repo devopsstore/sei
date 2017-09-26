@@ -5,7 +5,7 @@
     - role: apache
       apache_create_vhosts: true
       apache_listen_ip: "*"
-      apache_listen_port: 80
+      apache_listen_port: 8080
 
       apache_global_vhost_settings: |
         DirectoryIndex index.php index.html
