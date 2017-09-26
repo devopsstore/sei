@@ -12,9 +12,9 @@
 
           upstream:
             - name: "lb.sei.mj.gov.br"
-            strategy: "ip_hash"
-            server_list:
-              - "10.10.12.109 weight=3"
+              strategy: "ip_hash"
+              server_list:
+                - "10.10.12.109 weight=3"
 
             location_list:
               - name: "/"
