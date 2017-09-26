@@ -1,0 +1,23 @@
+---
+- hosts: webserver
+  become: true
+  roles:
+    - role: apache
+      apache_create_vhosts: true
+      apache_listen_ip: "*"
+      apache_listen_port: 80
+
+      apache_global_vhost_settings: |
+        DirectoryIndex index.php index.html
+
+      apache_vhosts:
+      - servername: "local.dev"
+        documentroot: "/var/www/html"
+        extra_parameters: |
+          RewriteCond %{HTTP_HOST} !^www\. [NC]
+          RewriteRule ^(.*)$ http://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  environment:
+    http_proxy: "http://proxy.mj.gov.br:3128"
+    https_proxy: "http://proxy.mj.gov.br:3128"
+    ftp_proxy: "http://proxy.mj.gov.br:3128"
