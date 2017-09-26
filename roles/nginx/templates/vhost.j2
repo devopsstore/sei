@@ -1,3 +1,21 @@
+{% block http_upstream_begin %}{% endblock %}
+{% block http_upstream %}
+{% for upstream in nginx_upstreams %}
+upstream {{ upstream.name }} {
+{% if upstream.strategy is defined %}
+        {{ upstream.strategy }};
+{% endif %}
+{% if upstream.keepalive is defined %}
+        keepalive {{ upstream.keepalive }};
+{% endif %}
+{% for server in upstream.servers %}
+        server {{ server }};
+{% endfor %}
+}
+{% endfor %}
+{% endblock %}
+{% block http_upstream_end %}{% endblock %}
+
 {% block server_redirect %}
 {% if item.server_name_redirect is defined %}
 server {
@@ -9,31 +27,28 @@ server {
 {% endblock %}
 
 server {
-    {% block server_begin %}{% endblock %}
+{% block server_begin %}{% endblock %}
 
-    {% block server_basic -%}
+{% block server_basic -%}
     listen {{ item.listen | default('80') }};
 
 {% if item.server_name is defined %}
     server_name {{ item.server_name }};
 {% endif %}
 
-{% if nginx_extra_http_options %}
-    {{ nginx_extra_http_options|indent(4, False) }}
-{% endif %}
-
-{% if item.root is defined %}
-    root {{ item.root }};
-{% endif %}
-
-{% if item.error_page is defined %}
-    error_page {{ item.error_page }};
-{% endif %}
 {% if item.access_log is defined %}
     access_log {{ item.access_log }};
 {% endif %}
 {% if item.error_log is defined %}
     error_log {{ item.error_log }} error;
+{% endif %}
+
+{% if nginx_extra_http_options %}
+    {{ nginx_extra_http_options|indent(4, False) }}
+{% endif %}
+
+{% if item.error_page is defined %}
+    error_page {{ item.error_page }};
 {% endif %}
 
 {% if item.return is defined %}
