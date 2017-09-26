@@ -15,7 +15,6 @@ upstream {{ upstream.name }} {
 {% endfor %}
 {% endblock %}
 {% block http_upstream_end %}{% endblock %}
-
 {% block server_redirect %}
 {% if item.server_name_redirect is defined %}
 server {
@@ -25,7 +24,6 @@ server {
 }
 {% endif %}
 {% endblock %}
-
 server {
 {% block server_begin %}{% endblock %}
 
