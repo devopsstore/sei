@@ -8,7 +8,7 @@ nginx_packages_install_recommends: true
 nginx_packages_update_cache: 1800
 
 nginx_daemon: nginx
-nginx_user: "ningx"
+nginx_user: "nginx"
 nginx_group: "nginx"
 
 nginx_pidfile: /var/run/nginx.pid
@@ -19,4 +19,3 @@ nginx_sites_dir: /etc/nginx/sites-enabled
 nginx_confd_dir: /etc/nginx/conf.d
 nginx_auth_dir: /etc/nginx/auth.d
 nginx_default_server_path: /etc/nginx/sites-enabled/default
-

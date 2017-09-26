@@ -4,11 +4,13 @@
 #
 # Comments begin with a '#' and extend through the end of the line.
 #
-user {{ nginx_user }} {{ nginx_group | default('') }};
+user {{ nginx_user }};
+
 error_log {{ nginx_error_log }} {{ nginx_error_log_level | default('error') }};
 pid {{ nginx_pidfile }};
-worker_processes {{ nginx_worker_processes | default('1') }};
-worker_priority {{ nginx_worker_priority | default('0') }};
+
+worker_processes {{ nginx_worker_processes }};
+
 {% if nginx_working_directory is defined and not nginx_working_directory is none -%}
 working_directory {{ nginx_working_directory }};
 {% endif %}
@@ -19,6 +21,7 @@ worker_rlimit_nofile {{ nginx_worker_rlimit_nofile }};
 events {
     worker_connections {{ nginx_worker_connections | default('512') }};
     use {{ nginx_use | default('epoll') }};
+    multi_accept on;
 }
 
 http {
@@ -31,7 +34,7 @@ http {
     keepalive_requests {{ nginx_keepalive_requests }};
     server_tokens {{ nginx_server_tokens | default(True) | ternary('on','off') }};
     connection_pool_size {{ nginx_connection_pool_size | default('256') }};
-    
+
     include {{ nginx_config_dir }}/mime.types;
     default_type {{ nginx_default_type | default('text/plain') }};
 
@@ -49,12 +52,12 @@ http {
 {%- if nginx_client_max_body_size is defined and not nginx_client_max_body_size is none %}
     client_max_body_size {{ nginx_client_max_body_size }};
 {% endif %}
-{%- if nginx_server_names_hash_bucket_size is defined and not nginx_server_names_hash_bucket_size is none %}   
+{%- if nginx_server_names_hash_bucket_size is defined and not nginx_server_names_hash_bucket_size is none %}
     server_names_hash_bucket_size {{ nginx_server_names_hash_bucket_size }};
 {% endif %}
 {%- if nginx_server_names_hash_max_size is defined and not nginx_server_names_hash_max_size is none %}
     server_names_hash_max_size {{ nginx_server_names_hash_max_size }};
-{% endif %} 
+{% endif %}
 
 {% if nginx_access_log is defined and nginx_access_log | trim != 'off' -%}
 {% if nginx_access_log_format is defined and not nginx_access_log_format is none %}
@@ -66,7 +69,7 @@ http {
 {% else %}
     access_log off;
 {% endif %}
- 
+
 {% if nginx_gzip is defined and nginx_gzip %}
     # Gzip module options
     gzip on;
@@ -91,7 +94,7 @@ http {
     ssl_certificate_key {{ nginx_ssl_dir }}/{{ nginx_ssl_certificate_key | basename }};
 {% endif %}
 
-    # Global proxy cache options
+# Global proxy cache options
 {% if nginx_proxy_cache_path is defined and not nginx_proxy_cache_path is none %}
     proxy_cache_path {{ nginx_proxy_cache_path | join(' ') }};
 {% endif %}
@@ -104,4 +107,3 @@ http {
 {% endif %}
     include {{ nginx_sites_dir }}/*.conf;
 }
-

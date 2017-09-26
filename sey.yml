@@ -1,0 +1,62 @@
+---
+- hosts: all
+  become: true
+  roles:
+    - role:
+      # Example with all available options (name is the only required parameter)
+nginx_server_list:
+  - name: "example.com"
+    root: "/var/www/example.com"
+    delete: False
+    listen:
+      - ["80", "default_server"]
+      - ["443", "ssl"]
+    alias: ["www.example.com"]
+    charset: "utf-8"
+    disable_symlinks: "off"
+    limit_rate: 0
+    limit_rate_after: 0
+    error_page: ["404", "/404.html"]
+    access_log: "/var/log/nginx/name_access.log"
+    index: ["index.html", "index.htm"]
+    rewrite:
+      - "^/users/(.*)$ /show?user=$1? last"
+    return: "403"
+    location_list:
+      - name: "^~ /images/"
+        confiration: "parameters"
+        try_files: "$uri $uri/ 404"
+        auth:
+           title: "Restricted"
+            users:
+               jose: $(openssl passwd -apr1 password)
+
+# Another example with vhost auth
+nginx_server_list:
+  - name: "example.com"
+    delete: True
+    root: "/var/www/example.com"
+    return: "403"
+    location_list:
+      - name: "/"
+    auth:
+      title: "Restricted"
+      users:
+        jose: $(openssl passwd -apr1 password)
+
+# Example with a proxy backend
+nginx_server_list:
+  - name: "proxybackend"
+    delete: False
+    listen:
+      - ["80", "default_server"]
+    access_log: "/var/log/nginx/name_access.log"
+    upstream:
+      strategy: "ip_hash"
+      server_list:
+        - "srv1.example.com"
+        - "srv2.example.com weight=3"
+        - "srv3.example.com"
+    location_list:
+      - name: "/"
+        proxy_pass: "http://proxybackend"
