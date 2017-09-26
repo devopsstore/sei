@@ -16,6 +16,6 @@
               server_list:
                 - "10.10.12.109 weight=3"
 
-            location_list:
-              - name: "/"
+          location_list:
+            - name: "/"
               proxy_pass: "http://lb.sei.mj.gov.br"
