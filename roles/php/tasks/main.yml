@@ -9,8 +9,8 @@
   when: remove_php
   notify: restart webserver
 
-  - name: Install "{{ repository }}" repo
-    yum:
+- name: Install "{{ repository }}" repo
+  yum:
     name: "{{ item.repo_package }}"
     state: present
   with_items: "{{ repo_list }}"
