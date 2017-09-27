@@ -12,10 +12,9 @@
 
   tasks:
   - name: Copy jodconverter
-    copy:
+    unarchive:
       src: "{{ source }}/jodconverter/jodconverter-tomcat-2.2.2.zip"
       dest: "/opt"
-      remote_src: yes
 
   - name: Copy xml files for Protocolos
     copy:
