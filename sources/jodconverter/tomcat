@@ -37,7 +37,7 @@ export CATALINA_HOME=/opt/jodconverter-tomcat-2.2.2
 export CATALINA_BASE=/opt/jodconverter-tomcat-2.2.2
 
 #JAVA_OPTS is memory variables
-export JAVA_OPTS="-Djava.awt.headless=true -Xms256m -Xmx512m -XX:PermSize=256m -XX:MaxPermSize=512m -XX:NewRatio=3 -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+CMSClassUnloadingEnabled -XX:+CMSClassUnloadingEnabled"
+export JAVA_OPTS="-Djava.awt.headless=true -Xms256m -Xmx512m -XX:NewRatio=3 -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+CMSClassUnloadingEnabled -XX:+CMSClassUnloadingEnabled"
 
 #TOMCAT_USER is the default user of tomcat
 export TOMCAT_USER=root
