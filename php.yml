@@ -5,7 +5,7 @@
     -  role: php
   vars:
     remove_php: true
-    php_version: php56
+    php_version: php70
     repository: remi
     php_modules:
       - cli
