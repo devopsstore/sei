@@ -46,11 +46,8 @@
       group: solr
       mode: u=rw,g=r,o=r
 
-  handlers:
-  - service:
-      name: solr
-      state: started
-      enabled: yes
+  - name: Restart Solr
+    service: name=solr state=restarted
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"
