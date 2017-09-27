@@ -2,26 +2,26 @@
 - hosts: webserver
   become: true
   roles:
-    -  { role: php }
-  vars:
-    remove_php: true
-    php_version: php56
-    repository: remi
-    php_modules:
-      - cli
-      - common
-      - devel
-      - fpm
-      - gd
-      - ldap
-      - mbstring
-      - mcrypt
-      - mysqlnd
-      - opcache
-      - pdo
-      - pear
-      - process
-      - xml
+    -  role: php
+    vars:
+      remove_php: true
+      php_version: php56
+      repository: remi
+      php_modules:
+        - cli
+        - common
+        - devel
+        - fpm
+        - gd
+        - ldap
+        - mbstring
+        - mcrypt
+        - mysqlnd
+        - opcache
+        - pdo
+        - pear
+        - process
+        - xml
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"
