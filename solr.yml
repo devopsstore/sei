@@ -19,7 +19,7 @@
         - sei-protocolos
         - sei-publicacoes
   vars:
-    source: "/etc/ansible/projects/sei/source"
+    source: "/etc/ansible/projects/sei/sources"
 
   tasks:
   - name: Copia Base Conhecimento
