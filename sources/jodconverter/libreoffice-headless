@@ -1,0 +1,56 @@
+#!/bin/bash
+#libreoffice.org headless server script
+#
+#chkconfig: 2345 80 30
+# description: headless libreoffice server script
+# processname: libreoffice
+#
+# Author: Vic Vijayakumar
+# Modified by Federico Ch. Tomasczik
+# Modified by Manuel Vega Ulloa
+OOo_HOME=/usr/bin
+SOFFICE_PATH=$OOo_HOME/soffice
+PIDFILE=/var/run/libreoffice-server.pid
+port=8100
+set -e
+case "$1" in
+        start)
+    if [ -f $PIDFILE ]; then
+      echo "LibreOffice headless server has already started."
+      sleep 5
+      exit
+    fi
+      echo "Starting LibreOffice headless server"
+      $SOFFICE_PATH --headless --nologo --nofirststartwizard --accept="socket,host=127.0.0.1,port=$port;urp" & > /dev/null 2>&1
+      PID=`ps ax | grep "soffice.bin --headless"| grep -v grep|cut -d \  -f 1`
+      echo $PID> $PIDFILE
+    ;;
+    stop)
+    if [ -f $PIDFILE ]; then
+      PID=$(lsof -i:$port | tail -n1 | awk '{print $2}')
+      echo "Stopping LibreOffice headless server."
+      kill $PID
+      rm -f $PIDFILE
+      exit
+    fi
+    ;;
+    status)
+    if [ -f $PIDFILE ]; then
+      PID=$(lsof -i:$port | tail -n1 | awk '{print $2}')
+      if [ "$PID" != "" ]; then
+        echo -e "LibreOffice headless server PID: $PID esta rodando!"
+        exit
+      else
+        echo "LibreOffice headless server is not running."
+        exit
+      fi
+    fi
+	echo "LibreOffice headless server is not running."
+      exit
+    ;;
+    *)
+    echo "Usage: $0 {start|stop|status}"
+    exit 1
+esac
+exit 0
+

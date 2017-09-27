@@ -1,0 +1,32 @@
+---
+- hosts: jodconverter
+  become: true
+  vars:
+    source: "/etc/ansible/projects/sei/sources"
+
+  tasks:
+  - name: Copy jodconverter
+    copy:
+      src: "{{ source }}/jodconverter/jodconverter-tomcat-2.2.2.zip"
+      dest: "/opt"
+      remote_src: yes
+
+  - name: Copy xml files for Protocolos
+    copy:
+      src: "{{ source }}/jodconverter/tomcat"
+      dest: "/etc/init.d"
+      owner: root
+      group: root
+      mode: u=rwx,g=r,o=r
+
+  handlers:
+  - service:
+    name: tomcat
+    state: started
+    enabled: yes
+
+  environment:
+    http_proxy: "http://proxy.mj.gov.br:3128"
+    https_proxy: "http://proxy.mj.gov.br:3128"
+    ftp_proxy: "http://proxy.mj.gov.br:3128"
+    no_proxy: "localhost,127.0.0.1"
