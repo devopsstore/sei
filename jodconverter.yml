@@ -9,7 +9,7 @@
 
   vars:
     source: "/etc/ansible/projects/sei/sources"
-    
+
   tasks:
   - name: Copy jodconverter
     copy:
@@ -26,10 +26,11 @@
       mode: u=rwx,g=r,o=r
 
   handlers:
-  - service:
-    name: tomcat
-    state: started
-    enabled: yes
+  - name: Config tomcat service
+    service:
+      name: tomcat
+      state: started
+      enabled: yes
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"
