@@ -22,14 +22,14 @@
     source: "/etc/ansible/projects/sei/sources"
 
   tasks:
-  - name: Copia Base Conhecimento
+  - name: Copy xml files for Base Conhecimento
     copy:
       src: "{{ source }}/solr/sei-bases-conhecimento/"
       dest: "/var/solr/data/sei-bases-conhecimento/conf/"
       owner: solr
       group: solr
       mode: u=rw,g=r,o=r
-  - name: Copia Protocolos
+  - name: Copy xml files for Protocolos
     copy:
       src: "{{ source }}/solr/sei-protocolos/"
       dest: "/var/solr/data/sei-protocolos/conf/"
@@ -37,13 +37,17 @@
       group: solr
       mode: u=rw,g=r,o=r
 
-  - name: Copia Publicacoes
+  - name: Copy xml files for Publicacoes
     copy:
       src: "{{ source }}/solr/sei-publicacoes/"
       dest: "/var/solr/data/sei-publicacoes/conf/"
       owner: solr
       group: solr
       mode: u=rw,g=r,o=r
+
+  handlers:
+  - name: restart solr
+    service: name=solr state=restarted
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"
