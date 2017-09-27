@@ -40,7 +40,7 @@
   - name: Copia Publicacoes
     copy:
       src: "{{ source }}/solr/sei-publicacoes/"
-      dest: "/var/solr/data/sei-protocolos/conf/"
+      dest: "/var/solr/data/sei-publicacoes/conf/"
       owner: solr
       group: solr
       mode: u=rw,g=r,o=r
