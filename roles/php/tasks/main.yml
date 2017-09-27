@@ -9,19 +9,19 @@
   when: remove_php
   notify: restart webserver
 
-#- name: Install "{{ repository }}" repo
-#  yum:
-#    name: "{{ item.repo_package }}"
-#    state: present
-#  with_items: "{{ repo_list }}"
-#  when: item.name  == "{{ repository }}" and item.repo_gpg_key_url != ""
-#
-#- name: Import "{{ repository }}" GPG key
-#  rpm_key:
-#    key: "{{ item.repo_gpg_key_url }}"
-#    state: present
-#  with_items: "{{ repo_list }}"
-#  when: item.name  == "{{ repository }}" and item.repo_gpg_key_url != ""
+  - name: Install "{{ repository }}" repo
+    yum:
+    name: "{{ item.repo_package }}"
+    state: present
+  with_items: "{{ repo_list }}"
+  when: item.name  == "{{ repository }}" and item.repo_gpg_key_url != ""
+
+- name: Import "{{ repository }}" GPG key
+  rpm_key:
+    key: "{{ item.repo_gpg_key_url }}"
+    state: present
+  with_items: "{{ repo_list }}"
+  when: item.name  == "{{ repository }}" and item.repo_gpg_key_url != ""
 
 # Set variables for every repository
 # TODO: find a better way, this data should be in the defaults/main.yml in an array
