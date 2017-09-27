@@ -1,9 +1,15 @@
 ---
 - hosts: jodconverter
   become: true
+  roles:
+    - role: java
+      when: "ansible_os_family == 'RedHat'"
+      java_packages:
+        - java-1.8.0-openjdk
+
   vars:
     source: "/etc/ansible/projects/sei/sources"
-
+    
   tasks:
   - name: Copy jodconverter
     copy:
