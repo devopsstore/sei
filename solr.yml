@@ -20,21 +20,21 @@
         - sei-publicacoes
 
   tasks:
-  - copy: Base Publicacoes
+  - copy:
     src: source/sei-bases-conhecimento/*
     dest: /var/solr/data/sei-bases-conhecimento/conf/
     owner: solr
     group: solr
     mode: u=rw,g=r,o=r
 
-  - copy: Protocolos
+  - copy:
     src: source/sei-protocolos/*
     dest: /var/solr/data/sei-protocolos/conf/
     owner: solr
     group: solr
     mode: u=rw,g=r,o=r
 
-  - copy: Publicacoes
+  - copy:
     src: source/sei-publicacoes/*
     dest: /var/solr/data/sei-protocolos/conf/
     owner: solr
