@@ -1,0 +1,24 @@
+---
+- hosts: webserver
+  become: true
+  roles:
+    - role: java
+      when: "ansible_os_family == 'RedHat'"
+      java_packages:
+        - java-1.8.0-openjdk
+
+    - role: solr
+      solr_version: "6.1.0"
+      solr_create_user: true
+      solr_user: solr
+      solr_port: "8983"
+      solr_xms: "256M"
+      solr_xmx: "512M"
+      solr_cores:
+        - collection1
+        - teste
+
+  environment:
+    http_proxy: "http://proxy.mj.gov.br:3128"
+    https_proxy: "http://proxy.mj.gov.br:3128"
+    ftp_proxy: "http://proxy.mj.gov.br:3128"
