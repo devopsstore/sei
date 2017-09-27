@@ -11,12 +11,22 @@
     source: "/etc/ansible/projects/sei/sources"
 
   tasks:
+  - name: install libreoffice
+    yum:
+      name: libreoffice
+      state: latest
+
+  - name: install libreoffice-headless
+    yum:
+      name: libreoffice-headless
+      state: latest
+
   - name: Copy jodconverter
     unarchive:
       src: "{{ source }}/jodconverter/jodconverter-tomcat-2.2.2.zip"
       dest: "/opt"
 
-  - name: Copy xml files for Protocolos
+  - name: Copy tomcat file service
     copy:
       src: "{{ source }}/jodconverter/tomcat"
       dest: "/etc/init.d"
@@ -24,11 +34,11 @@
       group: root
       mode: u=rwx,g=r,o=r
 
-  - name: Config Tomcat
+  - name: Config Tomcat service
     service: name=tomcat enabled=yes
 
-  - name: Start Tomcat
-    service: name=tomcat state=started  
+  - name: Start Tomcat service
+    service: name=tomcat state=started
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"
