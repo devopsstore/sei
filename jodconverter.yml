@@ -23,12 +23,13 @@
       owner: root
       group: root
       mode: u=rwx,g=r,o=r
-      
-  - name: Config tomcat service
-    command: chkconfig tomcat on
+          
+  handlers:
+  - name: config tomcat service
+    service: name=solr enabled=yes
 
-  - name: Started tomcat service
-    command: service tomcat start
+  - name: start tomcat service
+    service: name=solr state=started
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"
