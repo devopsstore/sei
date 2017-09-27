@@ -31,9 +31,8 @@
       enabled: yes
 
   - name: Started tomcat service
-    service:
-      name: tomcat
-      state: started
+    command:
+      name: service tomcat start
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"
