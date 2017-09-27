@@ -1,7 +1,13 @@
 ---
 - hosts: webserver
   become: true
+  vars:
+    php_version: '5.6'
+
   roles:
+    - role: repo-remi
+      when: ansible_os_family == 'RedHat'
+    - role: php-version
     - role: php
       php_enablerepo: "remi"
       php_packages_state: "installed"
@@ -11,15 +17,15 @@
       php_max_execution_time: "90"
       php_upload_max_filesize: "256M"
       php_packages:
-        - php5.6
-        - php5.6-cli
-        - php5.6-common
-        - php5.6-devel
-        - php5.6-gd
-        - php5.6-mbstring
-        - php5.6-pdo
-        - php5.6-pecl-apcu
-        - php5.6-xml
+        - php
+        - php-cli
+        - php-common
+        - php-devel
+        - php-gd
+        - php-mbstring
+        - php-pdo
+        - php-pecl-apcu
+        - php-xml
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"
