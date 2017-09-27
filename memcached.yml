@@ -1,0 +1,10 @@
+---
+- hosts: webserver
+  become: true
+  roles:
+    -  role: memcached
+
+  environment:
+    http_proxy: "http://proxy.mj.gov.br:3128"
+    https_proxy: "http://proxy.mj.gov.br:3128"
+    ftp_proxy: "http://proxy.mj.gov.br:3128"
