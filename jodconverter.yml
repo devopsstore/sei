@@ -24,12 +24,8 @@
       group: root
       mode: u=rwx,g=r,o=r
 
-  handlers:
-  - name: config tomcat service
-    service: name=tomcat enabled=yes
-
-  - name: start tomcat service
-    service: name=tomcat state=started
+  - name: Start Tomcat
+    service: name=tomcat state=started enabled=yes
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"
