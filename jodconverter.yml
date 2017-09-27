@@ -23,11 +23,10 @@
       owner: root
       group: root
       mode: u=rwx,g=r,o=r
-
-  handlers:
+      
   - name: Config tomcat service
     command: chkconfig tomcat on
-    
+
   - name: Started tomcat service
     command: service tomcat start
 
