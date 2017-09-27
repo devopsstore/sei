@@ -28,7 +28,7 @@
     service: name=tomcat enabled=yes
 
   - name: Start Tomcat
-      service: name=tomcat state=started  
+    service: name=tomcat state=started  
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"
