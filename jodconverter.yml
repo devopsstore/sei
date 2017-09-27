@@ -21,6 +21,14 @@
       name: libreoffice-headless
       state: latest
 
+  - name: Copy libreoffice-headless file service
+    copy:
+      src: "{{ source }}/jodconverter/libreoffice-headless"
+      dest: "/etc/init.d"
+      owner: root
+      group: root
+      mode: u=rwx,g=r,o=r
+
   - name: Copy jodconverter
     unarchive:
       src: "{{ source }}/jodconverter/jodconverter-tomcat-2.2.2.zip"
@@ -33,6 +41,12 @@
       owner: root
       group: root
       mode: u=rwx,g=r,o=r
+
+  - name: Config libreoffice-headless service
+    service: name=libreoffice-headless enabled=yes
+
+  - name: Start libreoffice-headless service
+    service: name=libreoffice-headless state=started
 
   - name: Config Tomcat service
     service: name=tomcat enabled=yes
