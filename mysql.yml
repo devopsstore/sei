@@ -1,0 +1,23 @@
+---
+- hosts: database
+  become: true
+  roles:
+    - role: mysql
+      mysql_enabled_on_startup: yes
+      mysql_root_password: mysql
+      mysql_databases:
+        - name: teste
+          encoding: latin1
+          collation: latin1_general_ci
+                
+      mysql_users:
+        - name: teste
+          host: "%"
+          password: testemysql
+          priv: "teste.*:ALL"
+
+  environment:
+    http_proxy: "http://proxy.mj.gov.br:3128"
+    https_proxy: "http://proxy.mj.gov.br:3128"
+    ftp_proxy: "http://proxy.mj.gov.br:3128"
+    no_proxy: "localhost,127.0.0.1"

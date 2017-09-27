@@ -1,5 +1,5 @@
 ---
-- hosts: webserver
+- hosts: solr
   become: true
   roles:
     - role: java
