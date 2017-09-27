@@ -43,10 +43,10 @@
       mode: u=rwx,g=r,o=r
 
   - name: Config libreoffice-headless service
-    service: name=libreoffice-headless enabled=yes
+    systemd: name=libreoffice-headless enabled=yes
 
   - name: Start libreoffice-headless service
-    service: name=libreoffice-headless state=started
+    systemd: name=libreoffice-headless state=started
 
   - name: Config Tomcat service
     service: name=tomcat enabled=yes
