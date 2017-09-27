@@ -15,8 +15,31 @@
       solr_xms: "256M"
       solr_xmx: "512M"
       solr_cores:
-        - collection1
-        - teste
+        - sei-bases-conhecimento
+        - sei-protocolos
+        - sei-publicacoes
+
+  tasks:
+    - copy: Base Publicacoes
+      src: source/sei-bases-conhecimento/*
+      dest: /var/solr/data/sei-bases-conhecimento/conf/
+      owner: solr
+      group: solr
+      mode: u=rw,g=r,o=r
+
+    - copy: Protocolos
+      src: source/sei-protocolos/*
+      dest: /var/solr/data/sei-protocolos/conf/
+      owner: solr
+      group: solr
+      mode: u=rw,g=r,o=r
+
+    - copy: Publicacoes
+      src: source/sei-publicacoes/*
+      dest: /var/solr/data/sei-protocolos/conf/
+      owner: solr
+      group: solr
+      mode: u=rw,g=r,o=r
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"
