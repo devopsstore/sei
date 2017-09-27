@@ -2,16 +2,11 @@
 - hosts: webserver
   become: true
   roles:
-    - php
+    -  { role: php }
   vars:
     remove_php: true
-    webserver: httpd
     php_version: php56
     repository: remi
-    create_phpinfo: true
-    yum_state: latest
-    php_webserver: true
-
     php_modules:
       - cli
       - common
