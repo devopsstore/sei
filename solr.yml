@@ -19,28 +19,28 @@
         - sei-protocolos
         - sei-publicacoes
   vars:
-    source: /etc/ansible/projects/sei/source
+    source: "/etc/ansible/projects/sei/source"
 
   tasks:
   - name: Copia Base Conhecimento
     copy:
-      src: {{ source }}/solr/sei-bases-conhecimento/*
-      dest: /var/solr/data/sei-bases-conhecimento/conf/
+      src: "{{ source }}/solr/sei-bases-conhecimento/*"
+      dest: "/var/solr/data/sei-bases-conhecimento/conf/"
       owner: solr
       group: solr
       mode: u=rw,g=r,o=r
   - name: Copia Protocolos
     copy:
-      src: {{ source }}/solr/sei-protocolos/*
-      dest: /var/solr/data/sei-protocolos/conf/
+      src: "{{ source }}/solr/sei-protocolos/*"
+      dest: "/var/solr/data/sei-protocolos/conf/"
       owner: solr
       group: solr
       mode: u=rw,g=r,o=r
 
   - name: Copia Publicacoes
     copy:
-      src: {{ source }}/solr/sei-publicacoes/*
-      dest: /var/solr/data/sei-protocolos/conf/
+      src: "{{ source }}/solr/sei-publicacoes/*"
+      dest: "/var/solr/data/sei-protocolos/conf/"
       owner: solr
       group: solr
       mode: u=rw,g=r,o=r
