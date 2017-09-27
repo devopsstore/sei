@@ -1,0 +1,10 @@
+---
+
+# Run this test in order to check if something changed.
+- hosts: localhost
+  remote_user: root
+  roles:
+    - ansible-role-php
+  vars:
+    remove_php: false
+    yum_state: present

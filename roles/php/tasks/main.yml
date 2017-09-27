@@ -1,73 +1,110 @@
 ---
-# Variable setup.
-- name: Include OS-specific variables.
-  include_vars: "{{ ansible_os_family }}.yml"
+# tasks file for ansible-role-php
 
-- name: Define php_packages.
-  set_fact:
-    php_packages: "{{ __php_packages | list }}"
-  when: php_packages is not defined
+- name: Remove any php version
+  become: yes
+  yum:
+    name: php*
+    state: removed
+  when: remove_php
+  notify: restart webserver
 
-- name: Define extra php_packages.
-  set_fact:
-    php_packages: "{{ php_packages | list + php_packages_extra | list }}"
-  when: php_packages_extra is defined
+#- name: Install "{{ repository }}" repo
+#  yum:
+#    name: "{{ item.repo_package }}"
+#    state: present
+#  with_items: "{{ repo_list }}"
+#  when: item.name  == "{{ repository }}" and item.repo_gpg_key_url != ""
+#
+#- name: Import "{{ repository }}" GPG key
+#  rpm_key:
+#    key: "{{ item.repo_gpg_key_url }}"
+#    state: present
+#  with_items: "{{ repo_list }}"
+#  when: item.name  == "{{ repository }}" and item.repo_gpg_key_url != ""
 
-- name: Define php_webserver_daemon.
-  set_fact:
-    php_webserver_daemon: "{{ __php_webserver_daemon }}"
-  when: php_webserver_daemon is not defined
+# Set variables for every repository
+# TODO: find a better way, this data should be in the defaults/main.yml in an array
+- set_fact:
+    php_repo_sufix: ""
+  when: repository == "base"
 
-- name: Define php_conf_paths.
-  set_fact:
-    php_conf_paths: "{{ __php_conf_paths }}"
-  when: php_conf_paths is not defined
+- set_fact:
+    php_repo_sufix: "u"
+  when: repository == "ius"
 
-- name: Define php_extension_conf_paths.
-  set_fact:
-    php_extension_conf_paths: "{{ __php_extension_conf_paths }}"
-  when: php_extension_conf_paths is not defined
+# remi doesn't need php_repo_sufix because it uses the default names.
+- set_fact:
+    php_repo_sufix: ""
+  when: repository == "remi"
 
-- name: Define php_apc_conf_filename.
-  set_fact:
-    php_apc_conf_filename: "{{ __php_apc_conf_filename }}"
-  when: php_apc_conf_filename is not defined
+- set_fact:
+    php_repo_sufix: "w"
+  when: repository == "webtatic"
 
-- name: Define php_opcache_conf_filename (Ubuntu 16.04).
-  set_fact:
-    php_opcache_conf_filename: "10-opcache.ini"
-  when: php_opcache_conf_filename is not defined and ansible_distribution_version == "16.04"
+# php install task for remi repo only. `Unsafe Repositories`
+# More info: https://ius.io/SafeRepo/#unsafe-package-types
+- name: Install {{ php_version }} using "remi-{{ php_version }}" repo
+  become: yes
+  yum:
+    pkg: "php"
+    state: "{{ yum_state }}"
+    enablerepo: "{{ repository }}-{{ php_version }}"
+  when: ansible_os_family == "RedHat" and repository == "remi"
+  notify: restart webserver
 
-- name: Define php_opcache_conf_filename.
-  set_fact:
-    php_opcache_conf_filename: "{{ __php_opcache_conf_filename }}"
-  when: php_opcache_conf_filename is not defined
+# php module install task for remi repo only. `Unsafe Repositories`
+# More info: https://ius.io/SafeRepo/#unsafe-package-types
+- name: Install {{ php_version }} modules using "remi-{{ php_version }}" repo
+  become: yes
+  yum:
+    pkg: "php-{{ item }}"
+    state: "{{ yum_state }}"
+    enablerepo: "{{ repository }}-{{ php_version }}"
+  with_items: "{{ php_modules }}"
+  when: ansible_os_family == "RedHat" and repository == "remi"
+  notify: restart webserver
 
-- name: Define php_fpm_conf_path.
-  set_fact:
-    php_fpm_conf_path: "{{ __php_fpm_conf_path }}"
-  when: php_fpm_conf_path is not defined
+# php install task for all other repos. `Safe Repositories`
+# More info: https://ius.io/SafeRepo/#safe-package-types
+- name: Install {{ php_version }} using "{{ repository }}" repo
+  become: yes
+  yum:
+    pkg: "{{ php_version }}{{ php_repo_sufix }}"
+    state: "{{ yum_state }}"
+    enablerepo: "{{ repository }}"
+  when: ansible_os_family == "RedHat" and repository != "remi"
+  notify: restart webserver
 
-# Setup/install tasks.
-- include: setup-RedHat.yml
-  when: (php_install_from_source == false) and (ansible_os_family == 'RedHat')
-  static: no
+# php module install task for all other repos. `Safe Repositories`
+# More info: https://ius.io/SafeRepo/#safe-package-types
+- name: Install {{ php_version }} modules using "{{ repository }}" repo
+  become: yes
+  yum:
+    pkg: "{{ php_version }}{{ php_repo_sufix }}-{{ item }}"
+    state: "{{ yum_state }}"
+    enablerepo: "{{ repository }}"
+  with_items: "{{ php_modules }}"
+  when: ansible_os_family == "RedHat" and repository != "remi"
+  notify: restart webserver
 
-- include: setup-Debian.yml
-  when: (php_install_from_source == false) and (ansible_os_family == 'Debian')
-  static: no
+- name: Custom php.ini
+  become: yes
+  template:
+    src: custom.php.ini.tpl
+    dest: "/etc/php.d/{{ custom_php_ini }}.php.ini"
+    owner: root
+    group: root
+    mode: 0664
+  when: create_custom_php_ini
+  notify: restart webserver
 
-# Install PHP from source when php_install_from_source is true.
-- include: install-from-source.yml
-  when: php_install_from_source == true
-  static: no
-
-# Configure PHP.
-- include: configure.yml
-  static: no
-- include: configure-apcu.yml
-  static: no
-- include: configure-opcache.yml
-  static: no
-- include: configure-fpm.yml
-  static: no
+- name: Create test phpinfo.php
+  become: yes
+  template:
+    src: phpinfo.php.tpl
+    dest: "{{ webserver_folder }}phpinfo.php"
+    owner: root
+    group: root
+    mode: 0664
+  when: create_phpinfo

@@ -1,31 +1,29 @@
 ---
 - hosts: webserver
   become: true
-  vars:
-    php_version: '5.6'
-
   roles:
-    - role: repo-remi
-      when: ansible_os_family == 'RedHat'
-    - role: php-version
     - role: php
-      php_enablerepo: "remi"
-      php_packages_state: "installed"
-      php_install_recommends: yes
-      php_webserver_daemon: "httpd"
-      php_memory_limit: "128M"
-      php_max_execution_time: "90"
-      php_upload_max_filesize: "256M"
-      php_packages:
-        - php
-        - php-cli
-        - php-common
-        - php-devel
-        - php-gd
-        - php-mbstring
-        - php-pdo
-        - php-pecl-apcu
-        - php-xml
+      remove_php: true
+      webserver: httpd
+      php_version: php56
+      repository: remi
+      create_phpinfo: true
+
+      php_modules:
+        - cli
+        - common
+        - devel
+        - fpm
+        - gd
+        - ldap
+        - mbstring
+        - mcrypt
+        - mysqlnd
+        - opcache
+        - pdo
+        - pear
+        - process
+        - xml
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"

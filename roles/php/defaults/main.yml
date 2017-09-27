@@ -1,128 +1,97 @@
 ---
-# Pass in a comma-separated list of repos to use (e.g. "remi,epel"). Used only
-# for RHEL/CentOS.
-php_enablerepo: ""
 
-# PHP package state; use 'installed' to make sure it's installed, or 'latest' if
-# you want to upgrade or switch versions using a new repo.
-php_packages_state: installed
+# Remove any php version before install (true | false)
+remove_php: false
 
-# Whether to install recommended packages. Used only for Debian/Ubuntu.
-php_install_recommends: yes
+# Update php every time you run this role (present | latest)
+yum_state: latest
 
-# Set this to false if you're not using PHP with Apache/Nginx/etc.
-php_enable_webserver: true
+# Define if you are using a web server (true | false)
+php_webserver: true
 
-# PHP-FPM configuration.
-php_enable_php_fpm: false
-php_fpm_listen: "127.0.0.1:9000"
-php_fpm_listen_allowed_clients: "127.0.0.1"
-php_fpm_pm_max_children: 50
-php_fpm_pm_start_servers: 5
-php_fpm_pm_min_spare_servers: 5
-php_fpm_pm_max_spare_servers: 5
+# Define your web server (httpd | nginx)
+webserver: httpd
 
-# The executable to run when calling PHP from the command line.
-php_executable: "php"
+# Select php version (php | php55 | php56 | php70 | php71)
+#
+#    | package name | version | base | ius | webtatic | remi |
+#    | -            | -       | -    | -   | -        | -    |
+#    |php           | 5.4.x   | ok   |     |          | ok   |
+#    |php55         | 5.5.x   |      | ok  | ok       | ok   |
+#    |php56         | 5.6.x   |      | ok  | ok       | ok   |
+#    |php70         | 7.0.x   |      | ok  | ok       | ok   |
+#    |php71         | 7.1.x   |      |     |          | ok   |
+#
+# Be extra careful when you choose php version.
+# Not every repository have the corresponding php version. Check the table above.
+php_version: php56
 
-# OpCache settings.
-php_opcache_zend_extension: "opcache.so"
-php_opcache_enable: "1"
-php_opcache_enable_cli: "0"
-php_opcache_memory_consumption: "96"
-php_opcache_interned_strings_buffer: "16"
-php_opcache_max_accelerated_files: "4096"
-php_opcache_max_wasted_percentage: "5"
-php_opcache_validate_timestamps: "1"
-php_opcache_revalidate_path: "0"
-php_opcache_revalidate_freq: "2"
-php_opcache_max_file_size: "0"
-php_opcache_blacklist_filename: ""
+# EPEL only provides software not in the CentOS and RHEL official repositories, IUS and Remi provide newer versions of software already in the official repositories (like MySQL and PHP).
 
-# APCu settings.
-php_enable_apc: true
-php_apc_shm_size: "96M"
-php_apc_enable_cli: "0"
+# The IUS repository provides newer versions of software in the official CentOS and RHEL repositories. The IUS repository depends on the EPEL repository.
+# Package names in the IUS repository are not the same as the package names used in the official repositories. This helps avoid unintentional conflicts or software version updates.
+# Note: Because IUS uses different package names from the official repositories, IUS is recommended over Remi
 
-# If this is set to false, none of the following options will have any effect.
-# Any and all changes to /etc/php.ini will be your responsibility.
-php_use_managed_ini: true
+# The Remi repository provides newer versions of software in the core CentOS and RHEL repositories. The Remi repository depends on the EPEL repository.
+# Package names in the Remi repository are the same as the package names used in the official repositories. This can result in inadvertent package upgrades when running an update with yum, so use the Remi repository with care.
+# Note: Because Remi uses the same package names as the official repositories, Remi is not recommended
+# Info: remi wizard: http://rpms.remirepo.net/wizard/
 
-php_expose_php: "On"
-php_memory_limit: "256M"
-php_max_execution_time: "60"
-php_max_input_time: "60"
-php_max_input_vars: "1000"
-php_realpath_cache_size: "32K"
+# Choose repository (base | ius | webtatic | remi)
+#
+# ius and remi needs epel repo, epel will be installed automatically if you choose one of these two.
+# If you are using php (php 5.4) use the base repo, otherwise I suggest the isu repository.
+repository: ius
 
-php_file_uploads: "On"
-php_upload_max_filesize: "64M"
-php_max_file_uploads: "20"
+# Add or remove php modules (do not include php itself)
+php_modules:
+  - cli
+  - common
+  - devel
+  - fpm
+  - gd
+  - ldap
+  - mbstring
+  - mcrypt
+  - mysqlnd
+  - opcache
+  - pdo
+  - pear
+  - pecl-uploadprogress
+  - process
+  - xml
 
-php_post_max_size: "32M"
-php_date_timezone: "America/Chicago"
-php_allow_url_fopen: "On"
+# Create CUSTOM.php.ini (true | false)
+create_custom_php_ini: true
 
-php_sendmail_path: "/usr/sbin/sendmail -t -i"
-php_output_buffering: "4096"
-php_short_open_tag: "Off"
-php_disable_functions: []
+# Give the name you want for the CUSTOM.php.ini (string)
+#
+# Edit the php custom configuration in the `templates/custom.php.ini.tpl`
+custom_php_ini: custom
 
-php_session_cookie_lifetime: 0
-php_session_gc_probability: 1
-php_session_gc_divisor: 1000
-php_session_gc_maxlifetime: 1440
-php_session_save_handler: files
-php_session_save_path: ''
+# Create DOMAIN/phpinfo.php test page (true | false)
+create_phpinfo: true
 
-php_error_reporting: "E_ALL & ~E_DEPRECATED & ~E_STRICT"
-php_display_errors: "Off"
-php_display_startup_errors: "Off"
+# Web server folder (string, followed by '/')
+webserver_folder: /var/www/html/
 
-# Install PHP from source (instead of using a package manager) with these vars.
-php_install_from_source: false
-php_source_repo: "https://git.php.net/repository/php-src.git"
-php_source_version: "master"
-php_source_clone_dir: "~/php-src"
-php_source_clone_depth: 1
-php_source_install_path: "/opt/php"
-php_source_install_gmp_path: "/usr/include/x86_64-linux-gnu/gmp.h"
-# For faster compile time: "make --jobs=X" where X is # of cores present.
-php_source_make_command: "make"
-php_source_configure_command: >
-  ./configure
-  --prefix={{ php_source_install_path }}
-  --with-config-file-path={{ php_conf_paths | first }}
-  --enable-mbstring
-  --enable-zip
-  --enable-bcmath
-  --enable-pcntl
-  --enable-ftp
-  --enable-exif
-  --enable-calendar
-  --enable-opcache
-  --enable-pdo
-  --enable-sysvmsg
-  --enable-sysvsem
-  --enable-sysvshm
-  --enable-wddx
-  --with-curl
-  --with-mcrypt
-  --with-iconv
-  --with-gmp
-  --with-pspell
-  --with-gd
-  --with-jpeg-dir=/usr
-  --with-png-dir=/usr
-  --with-zlib-dir=/usr
-  --with-xpm-dir=/usr
-  --with-freetype-dir=/usr
-  --enable-gd-native-ttf
-  --enable-gd-jis-conv
-  --with-openssl
-  --with-pdo-mysql=/usr
-  --with-gettext=/usr
-  --with-zlib=/usr
-  --with-bz2=/usr
-  --with-recode=/usr
-  --with-mysqli=/usr/bin/mysql_config
+# Repository list. Do not change.
+repo_list:
+  - name: "base"
+    repo_package: ""
+    repo_gpg_key_url: ""
+
+  - name: "ius"
+    repo_package: "https://centos7.iuscommunity.org/ius-release.rpm"
+    #repo_package: "ius-release"
+    repo_gpg_key_url: "/etc/pki/rpm-gpg/IUS-COMMUNITY-GPG-KEY"
+
+  - name: "remi"
+    repo_package: "http://rpms.remirepo.net/enterprise/remi-release-7.rpm"
+    #repo_package: "remi-release"
+    repo_gpg_key_url: "/etc/pki/rpm-gpg/RPM-GPG-KEY-remi"
+
+  - name: "webtatic"
+    repo_package: "https://mirror.webtatic.com/yum/el7/webtatic-release.rpm"
+    #repo_package: "webtatic-release"
+    repo_gpg_key_url: "/etc/pki/rpm-gpg/RPM-GPG-KEY-webtatic-el7"

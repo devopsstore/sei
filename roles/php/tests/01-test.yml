@@ -1,0 +1,9 @@
+---
+
+# Initial test, remove php before run
+- hosts: localhost
+  remote_user: root
+  roles:
+    - ansible-role-php
+  vars:
+    remove_php: true
