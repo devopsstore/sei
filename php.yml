@@ -3,21 +3,21 @@
   become: true
   roles:
     - role: php
-      php_enablerepo: "remi-php56"
+      php_enablerepo: "remi"
       php_webserver_daemon: "httpd"
       php_memory_limit: "128M"
       php_max_execution_time: "90"
       php_upload_max_filesize: "256M"
       php_packages:
-        - php
-        - php-cli
-        - php-common
-        - php-devel
-        - php-gd
-        - php-mbstring
-        - php-pdo
-        - php-pecl-apcu
-        - php-xml
+        - php56
+        - php56-cli
+        - php56-common
+        - php56-devel
+        - php56-gd
+        - php56-mbstring
+        - php56-pdo
+        - php56-pecl-apcu
+        - php56-xml
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"
