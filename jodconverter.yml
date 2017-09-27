@@ -31,7 +31,7 @@
       enabled: yes
 
   - name: Started tomcat service
-    command: service tomcat start
+    command: /etc/init.d/tomcat start
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"
