@@ -20,26 +20,28 @@
         - sei-publicacoes
 
   tasks:
-  - copy:
-    src: source/sei-bases-conhecimento/*
-    dest: /var/solr/data/sei-bases-conhecimento/conf/
-    owner: solr
-    group: solr
-    mode: u=rw,g=r,o=r
+  - name: Copia Base Conhecimento
+    copy:
+      src: source/sei-bases-conhecimento/*
+      dest: /var/solr/data/sei-bases-conhecimento/conf/
+      owner: solr
+      group: solr
+      mode: u=rw,g=r,o=r
+  - name: Copia Protocolos
+    copy:
+      src: source/sei-protocolos/*
+      dest: /var/solr/data/sei-protocolos/conf/
+      owner: solr
+      group: solr
+      mode: u=rw,g=r,o=r
 
-  - copy:
-    src: source/sei-protocolos/*
-    dest: /var/solr/data/sei-protocolos/conf/
-    owner: solr
-    group: solr
-    mode: u=rw,g=r,o=r
-
-  - copy:
-    src: source/sei-publicacoes/*
-    dest: /var/solr/data/sei-protocolos/conf/
-    owner: solr
-    group: solr
-    mode: u=rw,g=r,o=r
+  - name: Copia Publicacoes
+    copy:
+      src: source/sei-publicacoes/*
+      dest: /var/solr/data/sei-protocolos/conf/
+      owner: solr
+      group: solr
+      mode: u=rw,g=r,o=r
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"
