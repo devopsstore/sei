@@ -11,15 +11,11 @@
     source: "/etc/ansible/projects/sei/sources"
 
   tasks:
-  - name: install libreoffice
-    yum:
-      name: libreoffice
-      state: latest
-
-  - name: install libreoffice-headless
-    yum:
-      name: libreoffice-headless
-      state: latest
+  - name: Install libreoffice package
+    yum: state=present name={{ item }}
+    with_items:
+      - libreoffice
+      - libreoffice-headless
 
   - name: Copy libreoffice-headless file service
     copy:
@@ -28,6 +24,9 @@
       owner: root
       group: root
       mode: u=rwx,g=r,o=r
+
+  - name: Config libreoffice-headless service
+    systemd: name=libreoffice-headless state=started enabled=yes
 
   - name: Copy jodconverter
     unarchive:
@@ -42,17 +41,8 @@
       group: root
       mode: u=rwx,g=r,o=r
 
-  - name: Config libreoffice-headless service
-    systemd: name=libreoffice-headless enabled=yes
-
-  - name: Start libreoffice-headless service
-    systemd: name=libreoffice-headless state=started
-
   - name: Config Tomcat service
-    service: name=tomcat enabled=yes
-
-  - name: Start Tomcat service
-    service: name=tomcat state=started
+    service: name=tomcat state=started enabled=yes
 
   environment:
     http_proxy: "http://proxy.mj.gov.br:3128"
